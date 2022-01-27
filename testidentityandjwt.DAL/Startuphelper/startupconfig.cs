@@ -1,11 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using testidentityandjwt.DAL.Context;
+﻿using Microsoft.Extensions.DependencyInjection;
 using testidentityandjwt.DAL.Repository;
 
 namespace testidentityandjwt.DAL.Startuphelper
@@ -17,8 +10,5 @@ namespace testidentityandjwt.DAL.Startuphelper
             services.AddScoped<Userepo>();
             return services;
         }
-
-       
     }
-    
 }

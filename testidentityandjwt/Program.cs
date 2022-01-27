@@ -1,17 +1,25 @@
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using testidentityandjwt.DAL.Context;
 using testidentityandjwt.DAL.Entities;
 using testidentityandjwt.DAL.Startuphelper;
+using DataProtectionProvider = testidentityandjwt.DataProtectionProvider;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//IN .NET 6 NON VI è PIù CLASSE STARTUP.
+//IN .NET 6 NON VI ï¿½ PIï¿½ CLASSE STARTUP.
 //METODO CONFIGURE SERVICES PER CONFIGURARE CONTAINER DEPENDENCY INJECTION SOSTITUITO CON WEBAPPLICATION.SERVICES
 
-//ConfigureServices(builder.Services);
-StartupHelper.Configureservices(builder.Services);
+//using a static method with 'this' keyword for the first argument allows you to call the method
+//directly on the object 'this' refers to
+builder.Services.Configureservices();
 
+//This is a 'fake' implementation for IDataProtectionProvider, it does nothing
+//I'm not sure what this thing is supposed to do, but I would research to see
+//if you need to implement the methods that throw a NotImplementedException
+//or if there is an implementation that you can register
+builder.Services.AddTransient<IDataProtectionProvider, DataProtectionProvider>();
 
 
 
