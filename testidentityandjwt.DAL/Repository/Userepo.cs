@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using testidentityandjwt.DAL.Context;
 using testidentityandjwt.DAL.DTO;
 using testidentityandjwt.DAL.Entities;
@@ -12,6 +13,7 @@ namespace testidentityandjwt.DAL.Repository
 {
     public class Userepo:EFRepository<MyUser>
     {
+        private readonly jwtandidentitycontext _context;
         private readonly UserManager<MyUser> _userManager;
         
         //Dont inject DbSet<>, you can just get it off of your context object.
@@ -23,35 +25,14 @@ namespace testidentityandjwt.DAL.Repository
         //Also note: if you look at your context you created, you have two DbSet<MyUser>, 
         //you could probably nuke context.Utenti and use context.Users that is inherited
         //of the class you are inheriting your context class from.
-        public Userepo(jwtandidentitycontext context,UserManager<MyUser>userManager):base(context,context.Utenti) 
-        { 
-            _userManager = userManager;
+        public Userepo(jwtandidentitycontext context):base(context,context.Utenti)
+        {
+            _context = context;
         }
 
-        public async Task<bool> Registeruser(Registerdto register)
+        public Task<List<MyUser>> GetAll()
         {
-            
-            MyUser useralreadyregistered = await _userManager.FindByNameAsync(register.Username.ToLower());
-            if(useralreadyregistered == null)
-            {
-                MyUser user = new MyUser()
-                {
-                    Email = register.Email,
-                    NormalizedEmail=register.Email.ToUpper(),
-                    UserName = register.Username,
-                    NormalizedUserName=register.Username.ToUpper(),
-                    
-                   
-
-                };
-              IdentityResult registerresult= await _userManager.CreateAsync(user,register.Password);
-                if (!registerresult.Succeeded)
-                    return false;
-
-                return true;
-
-            }
-            return false;
+            return _context.Users.ToListAsync();
         }
     }
 }

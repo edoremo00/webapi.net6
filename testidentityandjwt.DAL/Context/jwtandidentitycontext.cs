@@ -15,21 +15,5 @@ namespace testidentityandjwt.DAL.Context
         public jwtandidentitycontext(DbContextOptions<jwtandidentitycontext> options) : base(options) { } //richiamo costruttore classe base ossia identity dbcontext
 
         public DbSet<MyUser> Utenti { get; set;}
-
-      
-
-        protected override void OnModelCreating(ModelBuilder builder)
-        {
-            base.OnModelCreating(builder);
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-                optionsBuilder.UseSqlServer("DefaultConnection");
-        }
-
-
-
     }
 }

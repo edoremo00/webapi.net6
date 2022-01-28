@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using testidentityandjwt.DAL.DTO;
 using testidentityandjwt.DAL.Repository;
 
@@ -9,22 +8,38 @@ namespace testidentityandjwt.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly Userepo _userrepo;
+        // private readonly IUserAuthService _authService;
+        private readonly Userepo _userepo;
 
-        public AuthController(Userepo userrepo)
+        public AuthController(
+            // IUserAuthService authService, 
+            Userepo userepo)
         {
-            _userrepo = userrepo;
+            // _authService = authService;
+            _userepo = userepo;
         }
 
-        [HttpPost,Route("Register")]
+        // [HttpPost,Route("Register")]
 
-        public async Task<ActionResult> Register(Registerdto register)
+        // public async Task<ActionResult> Register(Registerdto register)
+        // {
+        //     if(await _authService.RegisterUser(register))
+        //     {
+        //         return Ok(register);
+        //     }
+        //     return BadRequest();
+        // }
+
+        [HttpGet, Route("GetUsers")]
+        public async Task<ActionResult> GetUsers()
         {
-            if(await _userrepo.Registeruser(register))
+            var users = await _userepo.GetAll();
+            if (!users.Any())
             {
-                return Ok(register);
+                return NoContent();
             }
-            return BadRequest();
+
+            return Ok(users);
         }
     }
 }

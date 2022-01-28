@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using testidentityandjwt.DAL.Context;
 using testidentityandjwt.DAL.Entities;
+using testidentityandjwt.DAL.Repository;
 using testidentityandjwt.DAL.Startuphelper;
 using DataProtectionProvider = testidentityandjwt.DataProtectionProvider;
 
@@ -20,7 +21,7 @@ builder.Services.Configureservices();
 //if you need to implement the methods that throw a NotImplementedException
 //or if there is an implementation that you can register
 builder.Services.AddTransient<IDataProtectionProvider, DataProtectionProvider>();
-
+builder.Services.AddTransient<IUserAuthService, UserAuthService>();
 
 
 builder.Services.AddDbContext<jwtandidentitycontext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
