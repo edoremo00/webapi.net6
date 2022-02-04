@@ -11,9 +11,10 @@ namespace testidentityandjwt.DAL.Context
 {
     public class jwtandidentitycontext:IdentityDbContext<MyUser>
     {
-        public jwtandidentitycontext() : base() { }
+        //public jwtandidentitycontext() : base() { }
         public jwtandidentitycontext(DbContextOptions<jwtandidentitycontext> options) : base(options) { } //richiamo costruttore classe base ossia identity dbcontext
 
+  
         public DbSet<MyUser> Utenti { get; set;}
 
       
