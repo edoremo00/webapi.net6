@@ -9,8 +9,11 @@ namespace testidentityandjwt.DAL.IServices
 {
     public interface IUserservice
     {
-        Task<List<MyUser>> Getalluser();
-        Task<MyUser?> Getsingle(string id);
+        Task<List<MyUser>> Getall();
+        Task<MyUser> Getsingle(string id);
+
+        MyUser Update(MyUser toupdate);
+        Task<bool>Delete(string id);
 
     }
 }
