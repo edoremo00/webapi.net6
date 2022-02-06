@@ -19,7 +19,20 @@ namespace testidentityandjwt.DAL.Services
            // _context = context;
         }
 
-        public async Task<List<MyUser>> Getalluser()
+       
+        public async Task<bool> Delete(string id)
+        {
+           MyUser? todelete= await Getsingle(id);
+            if(todelete is not null)
+            {
+                jwtandidentitycontext.Remove(todelete);
+                
+            }
+            return await jwtandidentitycontext.SaveChangesAsync() > 0;
+              
+        }
+
+        public virtual async Task<List<MyUser>> Getall()
         {
             var allusers = await jwtandidentitycontext.Users.ToListAsync();
             if(!allusers.Any())
@@ -33,6 +46,11 @@ namespace testidentityandjwt.DAL.Services
             if(user is null)
                 return null;
             return user;
+        }
+
+        public MyUser Update(MyUser entity)
+        {
+           throw new NotImplementedException();
         }
     }
 }

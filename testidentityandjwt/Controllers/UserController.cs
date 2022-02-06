@@ -20,7 +20,7 @@ namespace testidentityandjwt.Controllers
         [HttpGet,Route("Getallusers")]
         public async Task<ActionResult> Getallusers()
         {
-           var alluser=await _userservice.Getalluser();
+           var alluser=await _userservice.Getall();
             if(!alluser.Any())
                 return NoContent();
             return Ok(alluser);
@@ -34,6 +34,15 @@ namespace testidentityandjwt.Controllers
                 return NotFound(single);
             return Ok(single);
 
+
+        }
+
+        [HttpDelete,Route("deleteuser/{id}")]
+        public async Task<ActionResult> deleteuser(string id)
+        {
+            if (await _userservice.Delete(id))
+                return Ok(id);
+            return NotFound(id);
 
         }
     }
