@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using testidentityandjwt.DAL.DTO;
 using testidentityandjwt.DAL.Entities;
 using testidentityandjwt.DAL.IServices;
 using testidentityandjwt.DAL.Services;
@@ -10,17 +11,22 @@ namespace testidentityandjwt.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IUserservice _userservice;
+        //private readonly IUserservice _userservice;
 
-        public UserController(IUserservice userservice)
+        private readonly Func<string, IUserservice> _factory;//dal momento che interfaccia IUservice implementata da più classi necessito modo di risolvere dipendenza a runtime in base a un parametro
+        //questo metodo contenuto nel delegato mi permette di ottenere la giusta dipendenza a runtime
+        //nota che infatti a differenza di altri controller non ho iniettato l'interfaccia direttamente ma il delegato
+
+        public UserController(Func<string, IUserservice> factory)
         {
-            _userservice = userservice;
+            _factory= factory;
         }
 
         [HttpGet,Route("Getallusers")]
         public async Task<ActionResult> Getallusers()
         {
-           var alluser=await _userservice.Getall();
+           IUserservice rightservice = _factory("");
+            var alluser = await rightservice.Getall();
             if(!alluser.Any())
                 return NoContent();
             return Ok(alluser);
@@ -29,9 +35,10 @@ namespace testidentityandjwt.Controllers
         [HttpGet,Route("Getsingle/{id}")]
         public async Task<ActionResult> Getsingle(string id)
         {
-            MyUser? single = await _userservice.Getsingle(id);
+            IUserservice rightservice = _factory("");
+            UserDTO? single = await rightservice.Getsingle(id);
             if (single is null)
-                return NotFound(single);
+                return NoContent();
             return Ok(single);
 
 
@@ -40,10 +47,22 @@ namespace testidentityandjwt.Controllers
         [HttpDelete,Route("deleteuser/{id}")]
         public async Task<ActionResult> deleteuser(string id)
         {
-            if (await _userservice.Delete(id))
+            IUserservice rightservice = _factory("");
+            if (await rightservice.Delete(id))
                 return Ok(id);
             return NotFound(id);
 
+        }
+
+        [HttpPut,Route("updateuser")]
+        public async Task<ActionResult> Update(UserDTO toupdate)
+        {
+            IUserservice rightservice = _factory("");
+            if (await rightservice.Update(toupdate) is not null)
+            {
+                return Ok(toupdate);
+            }
+            return NotFound();
         }
     }
 }
