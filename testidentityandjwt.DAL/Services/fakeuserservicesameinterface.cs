@@ -1,21 +1,25 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using testidentityandjwt.DAL.Context;
+using testidentityandjwt.DAL.DTO;
 using testidentityandjwt.DAL.Entities;
 using testidentityandjwt.DAL.IServices;
+using testidentityandjwt.DAL.Mapper;
+using testidentityandjwt.DAL.Repository;
 
 namespace testidentityandjwt.DAL.Services
 {
-    public class fakeuserservicesameinterface : IUserservice
+    public class fakeuserservicesameinterface : EFRepository,IUserservice
     {
-        private readonly Func<string, IUserservice> _factory;
+        private readonly IDatamapper _mapper;
        
-        public fakeuserservicesameinterface(Func<string, IUserservice> factory)
+        public fakeuserservicesameinterface(jwtandidentitycontext context,IDatamapper mapper):base(context)
         {
-            _factory = factory;
-           
+           _mapper = mapper;
         }
         public Task<bool> Delete(string id)
         {
@@ -23,19 +27,19 @@ namespace testidentityandjwt.DAL.Services
             
         }
 
-        public async Task<List<MyUser>> Getall()
-        {
-            //throw new NotImplementedException();
-            // return await _factory("fakeuserservicesameinterface").Getall(); 
-            return await _factory("fakeuserservicesameinterface").Getall();
-        }
+     
 
-        public Task<MyUser> Getsingle(string id)
+        public Task<UserDTO?> Update(UserDTO entity)
         {
             throw new NotImplementedException();
         }
 
-        public MyUser Update(MyUser toupdate)
+       public async Task<List<UserDTO>> Getall()
+        {
+           return  await jwtandidentitycontext.Users.Select(u=>_mapper.mapmyusertodto(u)).AsNoTracking().ToListAsync();
+        }
+
+        Task<UserDTO?> IUserservice.Getsingle(string id)
         {
             throw new NotImplementedException();
         }
