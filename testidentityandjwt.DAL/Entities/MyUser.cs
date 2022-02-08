@@ -10,5 +10,6 @@ namespace testidentityandjwt.DAL.Entities
     public class MyUser:IdentityUser
     {
         public DateTime birthday { get; set; }
+        public bool IsDeleted { get; set; } = false;
     }
 }
