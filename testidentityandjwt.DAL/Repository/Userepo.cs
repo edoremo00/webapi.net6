@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using testidentityandjwt.DAL.Context;
 using testidentityandjwt.DAL.DTO;
 using testidentityandjwt.DAL.Entities;
@@ -30,9 +29,30 @@ namespace testidentityandjwt.DAL.Repository
             _context = context;
         }
 
-        public Task<List<MyUser>> GetAll()
+        public async Task<bool> Registeruser(Registerdto register)
         {
-            return _context.Users.ToListAsync();
+            
+            MyUser useralreadyregistered = await _userManager.FindByNameAsync(register.Username.ToLower());
+            if(useralreadyregistered == null)
+            {
+                MyUser user = new MyUser()
+                {
+                    Email = register.Email,
+                    NormalizedEmail=register.Email.ToUpper(),
+                    UserName = register.Username,
+                    NormalizedUserName=register.Username.ToUpper(),
+                    
+                   
+
+                };
+              IdentityResult registerresult= await _userManager.CreateAsync(user,register.Password);
+                if (!registerresult.Succeeded)
+                    return false;
+
+                return true;
+
+            }
+            return false;
         }
     }*/
 }
