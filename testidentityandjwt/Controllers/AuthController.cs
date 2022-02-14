@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
-using testidentityandjwt.DAL.DTO;
+using testidentityandjwt.BL.DTO;
+using testidentityandjwt.BL.IServices;
 using testidentityandjwt.DAL.Repository;
 
 namespace testidentityandjwt.Controllers

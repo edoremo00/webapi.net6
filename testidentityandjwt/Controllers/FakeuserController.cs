@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using testidentityandjwt.DAL.IServices;
-using testidentityandjwt.DAL.Services;
+
 
 namespace testidentityandjwt.Controllers
 {
