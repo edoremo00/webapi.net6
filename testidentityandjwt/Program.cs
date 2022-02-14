@@ -3,7 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using testidentityandjwt.DAL.Context;
 using testidentityandjwt.DAL.Entities;
 using testidentityandjwt.DAL.Repository;
-using testidentityandjwt.DAL.Startuphelper;
+
+using testidentityandjwt.Startuphelper;
 //using DataProtectionProvider = testidentityandjwt.DataProtectionProvider;
 
 var builder = WebApplication.CreateBuilder(args);

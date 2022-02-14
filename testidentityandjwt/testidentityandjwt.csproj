@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\testidentityandjwt.BL\testidentityandjwt.BL.csproj" />
     <ProjectReference Include="..\testidentityandjwt.DAL\testidentityandjwt.DAL.csproj" />
   </ItemGroup>
 

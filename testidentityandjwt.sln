@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "testidentityandjwt", "testidentityandjwt\testidentityandjwt.csproj", "{E20E998E-FBFC-40A2-82F1-DDD0EFE87E2E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "testidentityandjwt", "testidentityandjwt\testidentityandjwt.csproj", "{E20E998E-FBFC-40A2-82F1-DDD0EFE87E2E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "testidentityandjwt.DAL", "testidentityandjwt.DAL\testidentityandjwt.DAL.csproj", "{3D38294E-4D90-4B22-8042-CA4FF4E4EBA5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "testidentityandjwt.DAL", "testidentityandjwt.DAL\testidentityandjwt.DAL.csproj", "{3D38294E-4D90-4B22-8042-CA4FF4E4EBA5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "testidentityandjwt.BL", "testidentityandjwt.BL\testidentityandjwt.BL.csproj", "{3CDBC26C-B238-4422-8B8C-4FE4658C1CA2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{3D38294E-4D90-4B22-8042-CA4FF4E4EBA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D38294E-4D90-4B22-8042-CA4FF4E4EBA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D38294E-4D90-4B22-8042-CA4FF4E4EBA5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3CDBC26C-B238-4422-8B8C-4FE4658C1CA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CDBC26C-B238-4422-8B8C-4FE4658C1CA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CDBC26C-B238-4422-8B8C-4FE4658C1CA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CDBC26C-B238-4422-8B8C-4FE4658C1CA2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
