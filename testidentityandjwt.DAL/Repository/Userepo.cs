@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using testidentityandjwt.DAL.Context;
-using testidentityandjwt.DAL.DTO;
 using testidentityandjwt.DAL.Entities;
 
 namespace testidentityandjwt.DAL.Repository
