@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 using testidentityandjwt.BL.DTO;
 using testidentityandjwt.BL.IServices;
 
@@ -42,13 +43,20 @@ namespace testidentityandjwt.Controllers
 
         }
 
+       /* [HttpGet,Route("Usergoogle")]
+        public async Task<IActionResult> Googletest()
+        {
+            IUserservice rightservice = _factory("");
+            return Ok(await rightservice.Googlelogin());
+        }*/
+
         [HttpDelete,Route("deleteuser/{id}")]
         public async Task<ActionResult> deleteuser(string id)
         {
             IUserservice rightservice = _factory("");
             if (await rightservice.Delete(id))
-                return Ok(id);
-            return NotFound(id);
+                return Ok( JsonSerializer.Serialize<string>(id));
+            return NotFound(JsonSerializer.Serialize<string>(id));
 
         }
 

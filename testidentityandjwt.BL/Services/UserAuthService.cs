@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using testidentityandjwt.BL.DTO;
 using testidentityandjwt.DAL.Entities;
 using IUserAuthService = testidentityandjwt.BL.IServices.IUserAuthService;
@@ -13,12 +14,16 @@ namespace testidentityandjwt.BL.Services
     public class UserAuthService : IUserAuthService
     {
         private readonly UserManager<MyUser> _userManager;
+        private readonly UserQueueprocessor _userQueueprocessor;
         private readonly IConfiguration _configuration;
+        private readonly IQueueService _queueService;
 
-        public UserAuthService(UserManager<MyUser> userManager, IConfiguration configuration)
+        public UserAuthService(UserManager<MyUser> userManager, IConfiguration configuration,IQueueService queueService,UserQueueprocessor userQueueprocessor)
         {
             _userManager = userManager;
             _configuration = configuration;
+            _queueService = queueService;
+            _userQueueprocessor = userQueueprocessor;
         }
 
         public JwtSecurityToken createtoken(List<Claim> userclaim)
@@ -48,6 +53,7 @@ namespace testidentityandjwt.BL.Services
                     UserName = register.Username,
                     NormalizedUserName = register.Username.ToUpper(),
                     birthday = register.birthday.Date,
+                    EmailConfirmed = false
 
 
 
@@ -56,9 +62,13 @@ namespace testidentityandjwt.BL.Services
                 IdentityResult registerresult = await _userManager.CreateAsync(user, register.Password);
                 if (!registerresult.Succeeded)
                     return false;
-                string? emailconfirmtoken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                //string? emailconfirmtoken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 //var confirmationlink=Url.Action()
                 //MANDARE EMAIL A UTENTE CHE è STATO REGISTRATO
+
+                //MANDA MESSAGGIO A CODA AZURE IN SEGUITO A REGISTRAZIONE UTENTE
+                await _queueService.SendMessagetoqueue(user, _configuration.GetSection("Servicebus:queues:queuename").Value, Enums.Eventlabelsservicebus.UserregisteredEvent);
+
                 //con un link
                 return true;
 

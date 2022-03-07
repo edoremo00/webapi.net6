@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Azure;
+using testidentityandjwt.BL.Services;
 using testidentityandjwt.DAL.Context;
 using testidentityandjwt.DAL.Entities;
 using testidentityandjwt.DAL.Repository;
@@ -30,6 +32,35 @@ builder.Services.AddIdentity<MyUser,IdentityRole>()
     .AddEntityFrameworkStores<jwtandidentitycontext>()
     .AddDefaultTokenProviders();
 
+/*builder.Services.AddAuthentication().AddGoogle(googleoptions =>
+{
+    googleoptions.ClientId = builder.Configuration.GetSection("GoogleAuth:ClientId").Value;
+    googleoptions.ClientSecret = builder.Configuration.GetSection("GoogleAuth:Secret").Value;
+});*/
+//builder.Services.AddHostedService<UserQueueprocessor>();
+
+
+builder.Services.AddAzureClients(blob=>
+{
+    blob.AddBlobServiceClient(builder.Configuration.GetSection("Blob:Connectionstring").Value);
+    
+});
+
+
+
+
+
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "angularcorspolicy", builder =>
+    {
+        builder.WithOrigins("http://localhost:4200");
+        builder.AllowAnyMethod();
+        builder.AllowAnyHeader();
+    });
+});
+
 
 builder.Services.Configureservices();
 
@@ -55,6 +86,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("angularcorspolicy");
 
 //app.UseRouting();
 app.UseAuthentication();
