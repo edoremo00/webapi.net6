@@ -16,6 +16,7 @@ namespace testidentityandjwt.DAL.Context
 
   
         public DbSet<MyUser> Utenti { get; set;}
+        public DbSet<Todo> Todos { get;set;}
 
       
 
