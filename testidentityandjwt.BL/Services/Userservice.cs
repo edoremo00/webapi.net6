@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using testidentityandjwt.BL.DTO;
 using testidentityandjwt.BL.IMapper;
 using testidentityandjwt.BL.IServices;
@@ -12,11 +13,15 @@ namespace testidentityandjwt.BL.Services
     {
         //private readonly jwtandidentitycontext _context; NON MI SERVE CHIAMA COSTRUTTORE BASE
         private readonly IDatamapper _mapper;
+        private readonly SignInManager<MyUser> _manager;
 
-        public Userservice(jwtandidentitycontext context, IDatamapper mapper) : base(context)
+
+
+        public Userservice(jwtandidentitycontext context, IDatamapper mapper, SignInManager<MyUser> manager) : base(context)
         {
             // _context = context;
             _mapper = mapper;
+            _manager = manager;
         }
 
 
@@ -35,7 +40,8 @@ namespace testidentityandjwt.BL.Services
 
         public virtual async Task<List<UserDTO>> Getall()
         {
-            var allusers = await jwtandidentitycontext.Users.Where(u => u.IsDeleted == false).AsNoTracking().ToListAsync();
+            var allusers = await jwtandidentitycontext.Users.Where(u => u.IsDeleted == false)
+                .AsNoTracking().ToListAsync();
             if (!allusers.Any())
                 return new List<UserDTO>();
             return allusers.Select(u => _mapper.mapmyusertodto(u)).ToList();
@@ -86,6 +92,12 @@ namespace testidentityandjwt.BL.Services
             return null;
 
         }
+
+       /* public async Task<IEnumerable<object>> Googlelogin()
+        {
+            var prova = await _manager.GetExternalAuthenticationSchemesAsync();
+            return prova;
+        }*/
 
 
     }
