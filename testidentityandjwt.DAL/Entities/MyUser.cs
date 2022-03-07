@@ -11,5 +11,8 @@ namespace testidentityandjwt.DAL.Entities
     {
         public DateTime birthday { get; set; }
         public bool IsDeleted { get; set; } = false;
+
+        public string? profilepic { get; set; }
+        
     }
 }
