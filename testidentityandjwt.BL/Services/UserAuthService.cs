@@ -11,23 +11,60 @@ using IUserAuthService = testidentityandjwt.BL.IServices.IUserAuthService;
 
 namespace testidentityandjwt.BL.Services
 {
+
+   //THIS IS MY TRY TO IMPLEMENT WHAT MOSH IS DOING 
+   /* public class UserregisteredEventArgs : EventArgs
+    {
+        public MyUser MyUser { get; set; }
+
+        public delegate Task<object> UserregisteredEventHandler(object source, UserregisteredEventArgs userregisteredEventArgs);
+
+        public event UserregisteredEventHandler Userregistered;
+
+        protected async Task<object> OnRegistereduser()
+        {
+            if (Userregistered != null)
+                Userregistered(this, new UserregisteredEventArgs() { MyUser =});
+        }
+    }*/
+   
+
+
+       
+
+    
+
     public class UserAuthService : IUserAuthService
     {
         private readonly UserManager<MyUser> _userManager;
         private readonly UserQueueprocessor _userQueueprocessor;
         private readonly IConfiguration _configuration;
         private readonly IQueueService _queueService;
+        private readonly ISendEmailService _sendEmailService;
 
-        public UserAuthService(UserManager<MyUser> userManager, IConfiguration configuration,IQueueService queueService,UserQueueprocessor userQueueprocessor)
+        private AsyncCallback AsyncCallback;
+        public delegate Task<object> UserregisteredEventHandler(object source, EventArgs args);
+        public event UserregisteredEventHandler Userregistered;
+
+        public UserAuthService(UserManager<MyUser> userManager, IConfiguration configuration,IQueueService queueService,UserQueueprocessor userQueueprocessor,ISendEmailService sendEmailService )
         {
             _userManager = userManager;
             _configuration = configuration;
             _queueService = queueService;
             _userQueueprocessor = userQueueprocessor;
+            _sendEmailService = sendEmailService;
+        }
+
+        protected virtual void OnRegistereduser()
+        {
+            if (Userregistered != null)
+                Userregistered(this, EventArgs.Empty);
+            
         }
 
         public JwtSecurityToken createtoken(List<Claim> userclaim)
         {
+            
             var signingkey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
             JwtSecurityToken token = new JwtSecurityToken(
                 issuer: _configuration["JWT:ValidIssuer"],
@@ -62,14 +99,14 @@ namespace testidentityandjwt.BL.Services
                 IdentityResult registerresult = await _userManager.CreateAsync(user, register.Password);
                 if (!registerresult.Succeeded)
                     return false;
-                //string? emailconfirmtoken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                //var confirmationlink=Url.Action()
-                //MANDARE EMAIL A UTENTE CHE è STATO REGISTRATO
+                  
 
-                //MANDA MESSAGGIO A CODA AZURE IN SEGUITO A REGISTRAZIONE UTENTE
-                await _queueService.SendMessagetoqueue(user, _configuration.GetSection("Servicebus:queues:queuename").Value, Enums.Eventlabelsservicebus.UserregisteredEvent);
+                //SEND EMAIL TO USER WHO HAS JUST REGISTERED
 
-                //con un link
+
+                /*UserAuthService u = new UserAuthService();
+                SendEmailService s = new SendEmailService();
+                u.Userregistered +=s.OnUserregistered;*/
                 return true;
 
             }
@@ -94,10 +131,10 @@ namespace testidentityandjwt.BL.Services
                 //crea un otp. servono emailconfirmed a true e twofactorenabled a true nell'utente per farle andare
 
                 List<Claim> userclaims = new List<Claim>()
-            {
+                {
                 new Claim(ClaimTypes.Name,checkifexist.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
-            };
+                 };
 
                 JwtSecurityToken token = createtoken(userclaims);
 

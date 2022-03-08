@@ -11,17 +11,26 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using testidentityandjwt.BL.Enums;
 using testidentityandjwt.BL.Utils;
+using testidentityandjwt.DAL.Entities;
 
 namespace testidentityandjwt.BL.Services
 {
+ 
+
+
     public class SendEmailService : ISendEmailService
     {
+       
+
+
         private readonly IConfiguration _configuration;
 
         public SendEmailService(IConfiguration configuration)
         {
             _configuration = configuration;
         }
+
+        public SendEmailService() { }
 
         public async Task<object> SendEmail(string email, Emailsubjects emailsubjects)
         {
@@ -64,6 +73,14 @@ namespace testidentityandjwt.BL.Services
             var response = await clientemail.SendEmailAsync(emailmessage);
             return response.IsSuccessStatusCode ? true : false;
         }
+
+        //THIS IS THE METHOD WHICH IS NOT BEING CALLED BY THE EVENTHANDLER
+        public async Task<object> OnUserregistered(object source,EventArgs args)
+        {
+           return  await SendEmail("gamer200058@gmail.com", Emailsubjects.Welcomeemail);
+        }
+
+       
 
         private bool  Validateemailstructure(string emailtovalidate)
         {
