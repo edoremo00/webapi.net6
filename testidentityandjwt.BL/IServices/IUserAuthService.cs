@@ -9,5 +9,12 @@ namespace testidentityandjwt.BL.IServices
         Task<bool> RegisterUser(Registerdto register);
         JwtSecurityToken createtoken(List<Claim> userclaim);
         Task<JwtSecurityToken?> Login(LoginDTO loginDTO);
+        
+        public event UserregisteredEventHandler? UserRegistered;
     }
+    
+    
+    public delegate Task<object> UserregisteredEventHandler(object source, EventArgs args);
 }
+
+

@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using testidentityandjwt.BL.DTO;
+using testidentityandjwt.BL.IServices;
 using testidentityandjwt.DAL.Entities;
 using IUserAuthService = testidentityandjwt.BL.IServices.IUserAuthService;
 
@@ -27,39 +28,43 @@ namespace testidentityandjwt.BL.Services
                 Userregistered(this, new UserregisteredEventArgs() { MyUser =});
         }
     }*/
-   
 
+   public class UserAuthFacade : IUserAuthFacade
+   {
+       private readonly IUserAuthService _authService;
+       private readonly ISendEmailService _emailService;
 
-       
+       public UserAuthFacade(IUserAuthService authService, ISendEmailService emailService)
+       {
+           _authService = authService;
+           _emailService = emailService;
 
-    
+           _authService.UserRegistered += _emailService.OnRegisteredUser;
+       }
+
+       public Task<bool> RegisterUser(Registerdto registeredDto)
+       {
+           return _authService.RegisterUser(registeredDto);
+       }
+   }
 
     public class UserAuthService : IUserAuthService
     {
         private readonly UserManager<MyUser> _userManager;
-        private readonly UserQueueprocessor _userQueueprocessor;
         private readonly IConfiguration _configuration;
-        private readonly IQueueService _queueService;
-        private readonly ISendEmailService _sendEmailService;
 
-        private AsyncCallback AsyncCallback;
-        public delegate Task<object> UserregisteredEventHandler(object source, EventArgs args);
-        public event UserregisteredEventHandler Userregistered;
+        public event UserregisteredEventHandler? UserRegistered;
 
-        public UserAuthService(UserManager<MyUser> userManager, IConfiguration configuration,IQueueService queueService,UserQueueprocessor userQueueprocessor,ISendEmailService sendEmailService )
+        public UserAuthService(UserManager<MyUser> userManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _configuration = configuration;
-            _queueService = queueService;
-            _userQueueprocessor = userQueueprocessor;
-            _sendEmailService = sendEmailService;
         }
 
-        protected virtual void OnRegistereduser()
+        protected virtual void OnRegisteredUser()
         {
-            if (Userregistered != null)
-                Userregistered(this, EventArgs.Empty);
-            
+            //this does the same null check and if its not null, invokes our event handler
+            UserRegistered?.Invoke(this, EventArgs.Empty);
         }
 
         public JwtSecurityToken createtoken(List<Claim> userclaim)
@@ -141,10 +146,6 @@ namespace testidentityandjwt.BL.Services
                 return token;
             }
             return null;
-
-
         }
     }
-
-
 }

@@ -74,6 +74,14 @@ namespace testidentityandjwt.BL.Services
             return response.IsSuccessStatusCode ? true : false;
         }
 
+        public Task<object> OnRegisteredUser(object source, EventArgs args)
+        {
+            Console.WriteLine("sending email to registered user");
+
+            //not sure what you want to return here...
+            return Task.FromResult(new object());
+        }
+
         //THIS IS THE METHOD WHICH IS NOT BEING CALLED BY THE EVENTHANDLER
         public async Task<object> OnUserregistered(object source,EventArgs args)
         {
