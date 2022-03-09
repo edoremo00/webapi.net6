@@ -2,5 +2,5 @@
 
 public interface IUserAuthFacade
 {
-       
+    Task<bool> RegisterUser(Registerdto registeredDto);
 }
