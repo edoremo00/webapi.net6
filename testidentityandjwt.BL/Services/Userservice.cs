@@ -13,15 +13,15 @@ namespace testidentityandjwt.BL.Services
     {
         //private readonly jwtandidentitycontext _context; NON MI SERVE CHIAMA COSTRUTTORE BASE
         private readonly IDatamapper _mapper;
-        private readonly SignInManager<MyUser> _manager;
+       
 
 
 
-        public Userservice(jwtandidentitycontext context, IDatamapper mapper, SignInManager<MyUser> manager) : base(context)
+        public Userservice(jwtandidentitycontext context, IDatamapper mapper) : base(context)
         {
             // _context = context;
             _mapper = mapper;
-            _manager = manager;
+           
         }
 
 

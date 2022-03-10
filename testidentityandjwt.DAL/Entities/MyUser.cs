@@ -15,4 +15,6 @@ namespace testidentityandjwt.DAL.Entities
         public string? profilepic { get; set; }
         
     }
+
+  
 }
