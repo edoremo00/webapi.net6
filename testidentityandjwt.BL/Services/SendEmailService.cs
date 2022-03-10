@@ -17,7 +17,7 @@ namespace testidentityandjwt.BL.Services
 {
  
 
-
+    //SUBSCRIBER CLASS. IT SUBSCRIBES TO THE EVENT EMITTED FROM USERAUTHSERVICE CLASS
     public class SendEmailService : ISendEmailService
     {
        
@@ -30,7 +30,7 @@ namespace testidentityandjwt.BL.Services
             _configuration = configuration;
         }
 
-        public SendEmailService() { }
+        
 
         public async Task<object> SendEmail(string email, Emailsubjects emailsubjects)
         {
@@ -51,6 +51,17 @@ namespace testidentityandjwt.BL.Services
             emailmessage.AddTo(email);
             var response = await clientemail.SendEmailAsync(emailmessage);
             return response.IsSuccessStatusCode ? JsonSerializer.Serialize<bool>(true) :new Error(){Message="error in sending email",StatusCode=500 };
+        }
+
+       /* public async Task<object> SendEmailtoRegisteredUser(string email)
+        {
+            return SendEmail(email,Emailsubjects.Welcomeemail).GetAwaiter().GetResult();
+        }*/
+
+        public object OnRegisteredUser(object source,UserArgs userargs)//DECLARE A METHOD WITH THE SAME SIGNATURE AS THE PUBLISHER DELEGATE
+        {
+            //return SendEmailtoRegisteredUser(userargs.Email).GetAwaiter().GetResult();
+            return SendEmail(userargs.Email, Emailsubjects.Welcomeemail).GetAwaiter().GetResult();
         }
 
         //overload metodo precedente per avere anche parametro body
@@ -74,19 +85,21 @@ namespace testidentityandjwt.BL.Services
             return response.IsSuccessStatusCode ? true : false;
         }
 
-        public Task<object> OnRegisteredUser(object source, EventArgs args)
+       /* public Task<object> OnRegisteredUser(object source, EventArgs args)
         {
-            Console.WriteLine("sending email to registered user");
+            // Console.WriteLine("sending email to registered user");
 
             //not sure what you want to return here...
-            return Task.FromResult(new object());
+            // return Task.FromResult(new object());
+
+            return SendEmail("gamer200058@gmail.com", Emailsubjects.Welcomeemail);
         }
 
         //THIS IS THE METHOD WHICH IS NOT BEING CALLED BY THE EVENTHANDLER
         public async Task<object> OnUserregistered(object source,EventArgs args)
         {
            return  await SendEmail("gamer200058@gmail.com", Emailsubjects.Welcomeemail);
-        }
+        }*/
 
        
 
