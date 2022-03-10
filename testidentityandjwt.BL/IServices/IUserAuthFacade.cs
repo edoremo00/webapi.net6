@@ -1,4 +1,6 @@
-﻿namespace testidentityandjwt.BL.IServices;
+﻿using testidentityandjwt.BL.DTO;
+
+namespace testidentityandjwt.BL.IServices;
 
 public interface IUserAuthFacade
 {
