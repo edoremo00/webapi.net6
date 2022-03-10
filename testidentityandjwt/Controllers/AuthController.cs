@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using testidentityandjwt.BL.DTO;
 using testidentityandjwt.BL.IServices;
+using testidentityandjwt.BL.Services;
 using testidentityandjwt.DAL.Repository;
 
 namespace testidentityandjwt.Controllers
@@ -12,14 +13,18 @@ namespace testidentityandjwt.Controllers
     public class AuthController : ControllerBase
     {
          private readonly IUserAuthService _authService;
+        //private readonly IUserAuthFacade _userAuthFacade;
        
 
         public AuthController(
              IUserAuthService authService
+             //IUserAuthFacade userAuthFacade
        
             )
         {
              _authService = authService;
+            //_userAuthFacade = userAuthFacade;
+             
           
         }
 
@@ -33,6 +38,8 @@ namespace testidentityandjwt.Controllers
             }
             return BadRequest();
          }
+
+       
 
         [HttpPost,Route("Login")]
         public async Task<ActionResult> Login(LoginDTO login)

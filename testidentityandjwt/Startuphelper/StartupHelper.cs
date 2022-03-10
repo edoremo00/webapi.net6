@@ -10,7 +10,7 @@ namespace testidentityandjwt.Startuphelper
         public static IServiceCollection Configureservices(this IServiceCollection services)
         {
 
-            services.AddTransient<IUserAuthFacade, UserAuthFacade>();
+            //services.AddTransient<IUserAuthFacade, UserAuthFacade>();
             services.AddTransient<IUserAuthService, UserAuthService>();
             services.AddTransient<IUserservice, Userservice>();
             services.AddTransient<Userservice>();
