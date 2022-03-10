@@ -6,6 +6,8 @@ namespace testidentityandjwt.BL.Services
     {
         Task<object> SendEmail(string email, Emailsubjects emailsubjects);
         Task<bool> SendEmail(string email, Emailsubjects emailsubjects,string body);
-        Task<object> OnRegisteredUser(object source, EventArgs args);
+        object OnRegisteredUser(object source, UserArgs args);
+
+        //Task<object> SendEmailtoRegisteredUser(string email);
     }
 }
