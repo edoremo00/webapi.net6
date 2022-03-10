@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using testidentityandjwt.BL.DTO;
+using testidentityandjwt.BL.Services;
 
 namespace testidentityandjwt.BL.IServices
 {
@@ -10,11 +11,13 @@ namespace testidentityandjwt.BL.IServices
         JwtSecurityToken createtoken(List<Claim> userclaim);
         Task<JwtSecurityToken?> Login(LoginDTO loginDTO);
         
-        public event UserregisteredEventHandler? UserRegistered;
+        //public event UserregisteredEventHandler? UserRegistered;
+
+       //public delegate object RegisterUserEventHandler(object source, UserArgs userargs);
     }
     
     
-    public delegate Task<object> UserregisteredEventHandler(object source, EventArgs args);
+    //public delegate Task<object> UserregisteredEventHandler(object source, EventArgs args);
 }
 
 
