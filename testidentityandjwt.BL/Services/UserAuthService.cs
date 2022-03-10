@@ -29,7 +29,7 @@ namespace testidentityandjwt.BL.Services
         }
     }*/
 
-   public class UserAuthFacade : IUserAuthFacade
+  /* public class UserAuthFacade : IUserAuthFacade
    {
        private readonly IUserAuthService _authService;
        private readonly ISendEmailService _emailService;
@@ -42,30 +42,60 @@ namespace testidentityandjwt.BL.Services
            _authService.UserRegistered += _emailService.OnRegisteredUser;
        }
 
-       public Task<bool> RegisterUser(Registerdto registeredDto)
+       public async Task<bool> RegisterUser(Registerdto registeredDto)
        {
-           return _authService.RegisterUser(registeredDto);
+           return await _authService.RegisterUser(registeredDto);
        }
-   }
+   }*/
 
+    //PUBLISHER CLASS. PUBLISH THE EVENT ONUSERREGISTERED
+
+    //EVENTS AND DELEGATES STEPS
+
+    
     public class UserAuthService : IUserAuthService
     {
         private readonly UserManager<MyUser> _userManager;
         private readonly IConfiguration _configuration;
+        private readonly ISendEmailService _sendEmailService;
 
-        public event UserregisteredEventHandler? UserRegistered;
+        public delegate object RegisterUserEventHandler(object source, UserArgs userargs);/*1-DECLARE A DELEGATE. THIS DELEGATE MAKES THE COMMUNICATION HAPPEN.
+                                                                                           * THANKS TO HIM IT IS POSSIBLE TO KNOW WHICH METHOD IS GOING TO 
+                                                                                           * BE CALLED IN THE SUBSCRIBER CLASS
+                                                                                           * SOURCE IS THE PUBLISHER, EVENTARGS OR A CLASS THAT DERIVES FROM IT
+                                                                                           * ARE EVERY INFORMATION THAT I LIKE TO PASS TO THIS EVENT
+                                                                                           * IN THE SUBSCRIBER CLASS
+                                                                                           */
 
-        public UserAuthService(UserManager<MyUser> userManager, IConfiguration configuration)
+        public event RegisterUserEventHandler UserRegistered;/*DECLARE AN EVENT OF SAME TYPE OF THE DELEGATE
+                                                              * IN THE CONSTRUCTOR REGISTER THE SUBSCRIBERS FOR THIS EVENT
+                                                              */
+
+        protected virtual void OnUserRegistered(string email)/*DECLARE A METHOD FOR CONVENTIONS PROTECTED VIRTUAL VOID
+                                                              * AND WITH ON[NAME OF THE EVENT] AS METHOD NAME
+                                                              * CHECK IF THERE ARE SUBSCRIBERS FOR THIS EVENT
+                                                              * IF SO RAISE THE EVENT
+                                                              * */
+        {
+            UserRegistered?.Invoke(this, new UserArgs { Email = email });
+        }
+
+        public UserAuthService(UserManager<MyUser> userManager, IConfiguration configuration,ISendEmailService sendEmailService)
         {
             _userManager = userManager;
             _configuration = configuration;
+            _sendEmailService = sendEmailService;
+            UserRegistered += _sendEmailService.OnRegisteredUser;//HERE I REGISTER THE SENDEMAILSERVICE AS A SUBSCRIBER OF THE USERREGISTERED EVENT
         }
+        
 
-        protected virtual void OnRegisteredUser()
+        
+
+        /*protected virtual void OnRegisteredUser()
         {
             //this does the same null check and if its not null, invokes our event handler
             UserRegistered?.Invoke(this, EventArgs.Empty);
-        }
+        }*/
 
         public JwtSecurityToken createtoken(List<Claim> userclaim)
         {
@@ -83,7 +113,7 @@ namespace testidentityandjwt.BL.Services
 
         }
 
-        public async Task<bool> RegisterUser(Registerdto register)
+        public async Task<bool> RegisterUser(Registerdto register)  
         {
             MyUser useralreadyregistered = await _userManager.FindByNameAsync(register.Username.ToLower());
             if (useralreadyregistered is null)
@@ -104,14 +134,21 @@ namespace testidentityandjwt.BL.Services
                 IdentityResult registerresult = await _userManager.CreateAsync(user, register.Password);
                 if (!registerresult.Succeeded)
                     return false;
-                  
+
 
                 //SEND EMAIL TO USER WHO HAS JUST REGISTERED
 
-
-                /*UserAuthService u = new UserAuthService();
-                SendEmailService s = new SendEmailService();
-                u.Userregistered +=s.OnUserregistered;*/
+               //WHAT HAPPENS IF EMAIL SENDING GOES WRONG??? MAYBE A TRY CATCH IS BETTER?
+                OnUserRegistered(register.Email);/*HERE I RAISE THE EVENT
+                                                  * THE SUBSCRIBER GETS NOTIFIED AND CALLS THE ONREGISTEREDUSER
+                                                  * IN THIS CASE. BUT MORE AS A RULE CALLS A METHOD WITH THE SAME
+                                                  * SIGNATURE AS DECLARED BY THE PUBLISHER'S DELEGATE
+                                                  */
+                UserRegistered -= _sendEmailService.OnRegisteredUser;/*AFTER THE SUBSCRIBER GOT NOTIFIED 
+                                                                      * BY THE EVENT AND PROCESS IT
+                                                                      * I CAN REMOVE THE SUBSCRIBER REGISTRATION 
+                                                                      * TO AVOID MEMORY LEAKS
+                                                                      * */
                 return true;
 
             }
@@ -143,9 +180,16 @@ namespace testidentityandjwt.BL.Services
 
                 JwtSecurityToken token = createtoken(userclaims);
 
+                OnUserRegistered(login.email);
+
                 return token;
             }
             return null;
         }
+    }
+
+    public class UserArgs : EventArgs//CREATING A CLASS THAT EXTENDS FROM EVENTARGS IN ORDER TO PASS CUSTOM DATA TO THE EVENT
+    {
+        public string Email { get; set; }
     }
 }
