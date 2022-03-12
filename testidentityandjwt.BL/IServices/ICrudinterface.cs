@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace testidentityandjwt.BL.IServices
 {
-    public interface ICrudinterface<T> where T : class
+    public interface ICrudinterface<T,U> where T : class where U : class
     {
-        Task<T> CreateAsync(T entity);
-        Task<T> UpdateAsync(T entity);
-        Task<bool> Delete(int id);
-        Task<T> GetById(int id);
-        IQueryable<T> GetAll();
+        U Create(U entity);
+        U? Update(U entity);
+        bool Delete(int id);
+        U? GetById(int id);
+        IEnumerable<U> GetAll();
     }
 }

@@ -1,4 +1,5 @@
-﻿using testidentityandjwt.BL.IMapper;
+﻿using testidentityandjwt.BL.DTO;
+using testidentityandjwt.BL.IMapper;
 using testidentityandjwt.BL.IServices;
 using testidentityandjwt.BL.Services;
 
@@ -19,6 +20,8 @@ namespace testidentityandjwt.Startuphelper
             services.AddTransient<IUploadfile, Uploadfileservice>();
             services.AddTransient<UserQueueprocessor>();
             services.AddTransient<ISendEmailService, SendEmailService>();
+            services.AddTransient(typeof(ICrudinterface<DAL.Entities.Todo,TodoDTO>), typeof(TodoService));
+            services.AddTransient<ITodoService, TodoService>();
 
             //prova servicebus
             services.AddSingleton<IQueueService, QueueService>();
@@ -33,6 +36,7 @@ namespace testidentityandjwt.Startuphelper
                 }
             });
             services.AddSingleton<IDatamapper, Datamapper>();
+            services.AddSingleton<Datamapper>();
             return services;
 
 

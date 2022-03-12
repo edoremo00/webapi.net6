@@ -1,43 +1,123 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
+using testidentityandjwt.BL.DTO;
 using testidentityandjwt.BL.IServices;
 using testidentityandjwt.DAL.Context;
+using testidentityandjwt.DAL.Entities;
 using testidentityandjwt.DAL.Repository;
 
 namespace testidentityandjwt.BL.Services
 {
-    public class TodoService :EFRepository, ICrudinterface<TodoService>
+    public class TodoService : EFRepository, ICrudinterface<Todo, TodoDTO>,ITodoService
     {
-        public TodoService(jwtandidentitycontext context) : base(context)
+        private readonly Datamapper _mapper;
+        public TodoService(jwtandidentitycontext context, Datamapper mapper) : base(context)
         {
+            _mapper = mapper;
         }
 
-        public Task<TodoService> CreateAsync(TodoService entity)
+        public TodoDTO Create(TodoDTO entity)
         {
-            throw new NotImplementedException();
+            Todo todo = new()
+            {
+                Title = entity.Title,
+                CreationDate = DateTime.Now,
+                Description = entity.Description,
+                //isDone = entity.isTodoDone,
+                //istodoDeleted = entity.IsDeleted,
+                UserId = entity.UserId,
+                LastModifiedDate = DateTime.Now,
+            };
+            jwtandidentitycontext.Todos.Add(todo);
+            jwtandidentitycontext.SaveChanges();
+            return _mapper.maptodototodoDTO(todo);
         }
 
-        public Task<bool> Delete(int id)
+        public bool Delete(int id)
         {
-            throw new NotImplementedException();
+            Todo? todelete = jwtandidentitycontext.Todos.Find(id);
+            if (todelete is not null && !todelete.istodoDeleted)
+            {
+                todelete.istodoDeleted = true;
+                jwtandidentitycontext.SaveChanges();
+                return true;
+            }
+            return false;
         }
 
-        public IQueryable<TodoService> GetAll()
+        public IEnumerable<TodoDTO> GetAll()
         {
-            throw new NotImplementedException();
+            return jwtandidentitycontext.Todos.
+               AsNoTracking().
+               Where(t => t.istodoDeleted == false).Select(t => _mapper.maptodototodoDTO(t));
         }
 
-        public Task<TodoService> GetById(int id)
+        public TodoDTO? GetById(int id)
         {
-            throw new NotImplementedException();
+            Todo? tofind = jwtandidentitycontext.Todos.Find(id);
+            if (tofind is not null && !tofind.istodoDeleted)
+            {
+                return _mapper.maptodototodoDTO(tofind);
+            }
+            return null;
         }
 
-        public Task<TodoService> UpdateAsync(TodoService entity)
+        public TodoDTO? Update(TodoDTO entity)
         {
-            throw new NotImplementedException();
+            Todo? toupdtate = Genericgetsingle(entity.Id);
+            if (toupdtate is not null)
+            {
+                toupdtate.istodoDeleted = entity.IsDeleted;
+                toupdtate.Description = entity.Description;
+                toupdtate.isDone = entity.isTodoDone;
+                toupdtate.Title = entity.Title;
+                toupdtate.LastModifiedDate = DateTime.Now;
+
+                jwtandidentitycontext.SaveChangesAsync().GetAwaiter().GetResult();
+                return _mapper.maptodototodoDTO(toupdtate);
+
+            }
+            return null;
+
         }
+
+        private Todo? Genericgetsingle(int id)
+        {
+           Todo? t= jwtandidentitycontext.Todos.Find(id);
+            if (t is null || t.istodoDeleted)
+                return null;
+            return t;
+        }
+
+        public IEnumerable<TodoDTO> Gettodowithusers()
+        {
+            return jwtandidentitycontext.Todos.AsNoTracking()
+                .Where(t => t.istodoDeleted == false).
+                Include(u => u.User)
+                .Select(t => _mapper.maptodototodoDTO(t)).ToList();
+        }
+
+        public IEnumerable<TodoDTO> Getdonetodos(string foruserid="")
+        {
+            return String.IsNullOrEmpty(foruserid) ?
+                  jwtandidentitycontext.Todos.AsNoTracking()
+                 .Where(t => t.isDone == true && !t.istodoDeleted)
+                 .Select(t => _mapper.maptodototodoDTO(t)).ToList()
+
+                 :
+                  jwtandidentitycontext.Todos.AsNoTracking()
+                 .Where(t => t.isDone == true && !t.istodoDeleted && t.UserId==foruserid)
+                 .Select(t => _mapper.maptodototodoDTO(t)).ToList();
+
+        }
+
+        
     }
+
+    
 }
