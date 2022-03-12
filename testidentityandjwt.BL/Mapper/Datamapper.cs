@@ -4,18 +4,13 @@ using testidentityandjwt.DAL.Entities;
 
 namespace testidentityandjwt.BL.IServices
 {
-    public class Datamapper : IDatamapper
+    public class Datamapper<T,U> where T:class where U:class, IDatamapper<T, U> ,new()
     {
-        public UserDTO mapmyusertodto(MyUser tomap)
+        public U Map(T entity)
         {
-            return new UserDTO
-            {
-                Email = tomap.Email,
-                Userid = tomap.Id,
-                Birthday = tomap.birthday,
-                Username = tomap.UserName
-
-            };
+            return new();
         }
+
+        
     }
 }

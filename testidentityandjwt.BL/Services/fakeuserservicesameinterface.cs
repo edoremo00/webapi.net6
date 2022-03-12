@@ -7,15 +7,17 @@ using testidentityandjwt.BL.DTO;
 using testidentityandjwt.BL.IMapper;
 using testidentityandjwt.BL.IServices;
 using testidentityandjwt.DAL.Context;
+using testidentityandjwt.DAL.Entities;
 using testidentityandjwt.DAL.Repository;
 
 namespace testidentityandjwt.BL.Services
 {
     public class fakeuserservicesameinterface:EFRepository,IUserservice
     {
-        private readonly IDatamapper _mapper;
+        private readonly IDatamapper<MyUser,UserDTO> _mapper;
+        
 
-        public fakeuserservicesameinterface(jwtandidentitycontext context, IDatamapper mapper) : base(context)
+        public fakeuserservicesameinterface(jwtandidentitycontext context, IDatamapper<MyUser, UserDTO> mapper) : base(context)
         {
             _mapper = mapper;
         }
@@ -34,7 +36,7 @@ namespace testidentityandjwt.BL.Services
 
         public async Task<List<UserDTO>> Getall()
         {
-            return await jwtandidentitycontext.Users.Select(u => _mapper.mapmyusertodto(u)).AsNoTracking().ToListAsync();
+            return await jwtandidentitycontext.Users.Select(u => _mapper.Map(u)).AsNoTracking().ToListAsync();
         }
 
         Task<UserDTO?> IUserservice.Getsingle(string id)

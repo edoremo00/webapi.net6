@@ -16,12 +16,12 @@ namespace testidentityandjwt.BL.Services
     public class QueueService : IQueueService
     {
         private readonly IConfiguration _configuration;
-        private readonly IDatamapper _mapper;
+        
 
-        public QueueService(IConfiguration configuration, IDatamapper mapper)
+        public QueueService(IConfiguration configuration)
         {
             _configuration = configuration;
-            _mapper = mapper;
+            
         }
 
         public async Task SendMessagetoqueue<T>(T message, string queuename, Eventlabelsservicebus eventlabelname)//è generico va bene per varie classi

@@ -1,6 +1,8 @@
-﻿using testidentityandjwt.BL.IMapper;
+﻿using testidentityandjwt.BL.DTO;
+using testidentityandjwt.BL.IMapper;
 using testidentityandjwt.BL.IServices;
 using testidentityandjwt.BL.Services;
+using testidentityandjwt.DAL.Entities;
 
 namespace testidentityandjwt.Startuphelper
 {
@@ -14,11 +16,15 @@ namespace testidentityandjwt.Startuphelper
             services.AddTransient<IUserAuthService, UserAuthService>();
             services.AddTransient<IUserservice, Userservice>();
             services.AddTransient<Userservice>();
+            services.AddTransient<UserDTO>();
+            services.AddTransient<IDatamapper<MyUser, UserDTO>>();
             services.AddTransient<fakeuserservicesameinterface>();
             services.AddTransient<IUserservice, fakeuserservicesameinterface>();
             services.AddTransient<IUploadfile, Uploadfileservice>();
             services.AddTransient<UserQueueprocessor>();
             services.AddTransient<ISendEmailService, SendEmailService>();
+            //services.AddTransient<IUserservice>();
+            
 
             //prova servicebus
             services.AddSingleton<IQueueService, QueueService>();
@@ -32,7 +38,7 @@ namespace testidentityandjwt.Startuphelper
                     default: return serviceProvider.GetService<Userservice>();
                 }
             });
-            services.AddSingleton<IDatamapper, Datamapper>();
+            services.AddTransient(typeof(IDatamapper<,>),typeof(Datamapper<,>));
             return services;
 
 

@@ -12,12 +12,12 @@ namespace testidentityandjwt.BL.Services
     public class Userservice : EFRepository, IUserservice
     {
         //private readonly jwtandidentitycontext _context; NON MI SERVE CHIAMA COSTRUTTORE BASE
-        private readonly IDatamapper _mapper;
+        private readonly IDatamapper<MyUser,UserDTO> _mapper;
        
 
 
 
-        public Userservice(jwtandidentitycontext context, IDatamapper mapper) : base(context)
+        public Userservice(jwtandidentitycontext context, IDatamapper<MyUser,UserDTO> mapper) : base(context)
         {
             // _context = context;
             _mapper = mapper;
@@ -44,7 +44,7 @@ namespace testidentityandjwt.BL.Services
                 .AsNoTracking().ToListAsync();
             if (!allusers.Any())
                 return new List<UserDTO>();
-            return allusers.Select(u => _mapper.mapmyusertodto(u)).ToList();
+            return allusers.Select(u => _mapper.Map(u)).ToList();
         }
 
         public async Task<UserDTO?> Getsingle(string id)
@@ -52,7 +52,7 @@ namespace testidentityandjwt.BL.Services
             MyUser? user = await jwtandidentitycontext.Users.FindAsync(id);
             if (user is null || user.IsDeleted)
                 return null;
-            return _mapper.mapmyusertodto(user);
+            return _mapper.Map(user);
         }
 
         private async Task<MyUser?> Getsinglemyuser(string id) //get single che opera direttamente su db senza DTO
@@ -68,8 +68,8 @@ namespace testidentityandjwt.BL.Services
             MyUser? user = await jwtandidentitycontext.Users.FindAsync(id);
             if (user is null || user.IsDeleted)
                 return null;
-            if (mappeduser)
-                return _mapper.mapmyusertodto(user);
+            if (mappeduser) 
+                return _mapper.Map(user);
             return user;
 
 
@@ -86,7 +86,7 @@ namespace testidentityandjwt.BL.Services
                 usertoupdate.birthday = entity.Birthday;
                 jwtandidentitycontext.Update(usertoupdate);
                 if (await jwtandidentitycontext.SaveChangesAsync() > 0)
-                    return _mapper.mapmyusertodto(usertoupdate);
+                    return _mapper.Map(usertoupdate);
 
             }
             return null;
