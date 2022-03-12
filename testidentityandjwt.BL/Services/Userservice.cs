@@ -13,15 +13,24 @@ namespace testidentityandjwt.BL.Services
     {
         //private readonly jwtandidentitycontext _context; NON MI SERVE CHIAMA COSTRUTTORE BASE
         private readonly IDatamapper _mapper;
-       
+        private readonly ISendEmailService _sendEmailService;
+
+        public delegate object UpdateduserinfoEventHandler(object source, UserArgs userArgs);
+        
+        public event UpdateduserinfoEventHandler Updateduserinfo;
+
+        protected virtual void OnUpdateduserInfo(string email)
+        {
+            Updateduserinfo?.Invoke(this, new UserArgs { Email = email});
+        }
 
 
-
-        public Userservice(jwtandidentitycontext context, IDatamapper mapper) : base(context)
+        public Userservice(jwtandidentitycontext context, IDatamapper mapper, ISendEmailService sendEmailService) : base(context)
         {
             // _context = context;
             _mapper = mapper;
-           
+            _sendEmailService = sendEmailService;
+            Updateduserinfo += sendEmailService.OnUserinfochanged;
         }
 
 
@@ -86,7 +95,11 @@ namespace testidentityandjwt.BL.Services
                 usertoupdate.birthday = entity.Birthday;
                 jwtandidentitycontext.Update(usertoupdate);
                 if (await jwtandidentitycontext.SaveChangesAsync() > 0)
+                {
+                    OnUpdateduserInfo(usertoupdate.Email);
+                    Updateduserinfo -= _sendEmailService.OnUserinfochanged;
                     return _mapper.mapmyusertodto(usertoupdate);
+                }
 
             }
             return null;
@@ -101,6 +114,7 @@ namespace testidentityandjwt.BL.Services
 
 
     }
+
 }
 
 

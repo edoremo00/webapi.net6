@@ -64,6 +64,11 @@ namespace testidentityandjwt.BL.Services
             return SendEmail(userargs.Email, Emailsubjects.Welcomeemail).GetAwaiter().GetResult();
         }
 
+        public object OnUserinfochanged(object source,UserArgs userinfoargs)
+        {
+            return SendEmail(userinfoargs.Email,Emailsubjects.personal_info_had_been_changed).GetAwaiter().GetResult();
+        }
+
         //overload metodo precedente per avere anche parametro body
         public async Task<bool> SendEmail(string email, Emailsubjects emailsubjects,string bodycontent)
         {
@@ -128,7 +133,8 @@ namespace testidentityandjwt.BL.Services
                     return "your account has been deleted";
                 case Emailsubjects.password_has_been_changed:
                     return "your password has been changed";
-                    break;
+                case Emailsubjects.personal_info_had_been_changed:
+                    return "Your Personal info had been changed if you didn't make this change we suggest you to change your password";
                 default:
                     return String.Empty;
                     
