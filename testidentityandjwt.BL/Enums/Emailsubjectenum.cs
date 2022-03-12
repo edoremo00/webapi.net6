@@ -20,6 +20,9 @@ namespace testidentityandjwt.BL.Enums
         [EnumMember(Value = "Deletedaccount")]
         Deletedaccount,
         [EnumMember(Value = "password has been changed")]
-        password_has_been_changed
+        password_has_been_changed,
+        [EnumMember(Value = "personal info changed")]
+        personal_info_had_been_changed,
+
     }
 }
