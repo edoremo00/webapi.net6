@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using testidentityandjwt.BL.IServices;
+using testidentityandjwt.BL.Utils;
 
 namespace testidentityandjwt.Controllers
 {
@@ -22,11 +23,11 @@ namespace testidentityandjwt.Controllers
             string response = await _uploadifile.UploadFile(file);
             if (response== "formato non supportato")
             {
-                return StatusCode(StatusCodes.Status415UnsupportedMediaType, JsonSerializer.Serialize(response));
+                return StatusCode(StatusCodes.Status415UnsupportedMediaType,new Error { StatusCode=415,Message="unsupported file extension"});
                 
             }else if (response=="file not selected")
             {
-                return BadRequest(JsonSerializer.Serialize(response));
+                return BadRequest(new Error { StatusCode=400,Message="no file selected"});
             }
             return Ok(JsonSerializer.Serialize(response));
 
@@ -40,7 +41,7 @@ namespace testidentityandjwt.Controllers
             {
                 return Ok(JsonSerializer.Serialize(response));
             }
-            return BadRequest(JsonSerializer.Serialize($"file {filename} not found"));
+            return BadRequest(new Error { StatusCode=400,Message= $"file {filename} not found" });
 
            
         }
