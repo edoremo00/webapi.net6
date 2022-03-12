@@ -17,5 +17,20 @@ namespace testidentityandjwt.BL.IServices
 
             };
         }
+
+        public TodoDTO maptodototodoDTO(Todo todo)
+        {
+            return new TodoDTO
+            {
+                Created = todo.CreationDate,
+                Id = todo.Id,
+                Title = todo.Title,
+                IsDeleted = todo.istodoDeleted,
+                Description = todo.Description,
+                isTodoDone = todo.isDone,
+                UserId = todo.UserId,
+                Lastmodified = todo.LastModifiedDate
+            };
+        }
     }
 }
