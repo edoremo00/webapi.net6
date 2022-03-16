@@ -51,6 +51,13 @@ namespace testidentityandjwt.Controllers
             return todowithusers.Count()==0 ? NoContent(): Ok(todowithusers);
         }
 
+        [HttpGet,Route("Getallusertodo")]
+        public ActionResult<TodoDTO> Getallusertodo(string foruserid)
+        {
+            IEnumerable<TodoDTO> allusertodo = _todoService.Getallusertodo(foruserid);
+            return allusertodo.Count()==0 ? NoContent() : Ok(allusertodo);
+        }
+
         [HttpGet,Route("Getdonetodos")]
         public ActionResult<TodoDTO> Getdonetodos(string? foruserid="")
         {

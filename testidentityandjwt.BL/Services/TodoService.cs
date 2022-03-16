@@ -116,6 +116,13 @@ namespace testidentityandjwt.BL.Services
 
         }
 
+        public IEnumerable<TodoDTO> Getallusertodo(string foruserid)
+        {
+            return jwtandidentitycontext.Todos.AsNoTracking()
+                .Where(t => t.UserId == foruserid && !t.istodoDeleted)
+                .Select(t => _mapper.maptodototodoDTO(t));
+        }
+
         
     }
 

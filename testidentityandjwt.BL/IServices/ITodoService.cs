@@ -11,5 +11,6 @@ namespace testidentityandjwt.BL.IServices
     {
         public IEnumerable<DTO.TodoDTO> Gettodowithusers();
         public IEnumerable<TodoDTO> Getdonetodos(string foruserid = "");
+        public IEnumerable<TodoDTO> Getallusertodo(string foruserid);
     }
 }
