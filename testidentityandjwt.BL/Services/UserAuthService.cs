@@ -138,17 +138,24 @@ namespace testidentityandjwt.BL.Services
 
                 //SEND EMAIL TO USER WHO HAS JUST REGISTERED
 
-               //WHAT HAPPENS IF EMAIL SENDING GOES WRONG??? MAYBE A TRY CATCH IS BETTER?
-                OnUserRegistered(register.Email);/*HERE I RAISE THE EVENT
+                //WHAT HAPPENS IF EMAIL SENDING GOES WRONG??? MAYBE A TRY CATCH IS BETTER?--> IT IS :)
+                try
+                {
+                    OnUserRegistered(register.Email);/*HERE I RAISE THE EVENT
                                                   * THE SUBSCRIBER GETS NOTIFIED AND CALLS THE ONREGISTEREDUSER
                                                   * IN THIS CASE. BUT MORE AS A RULE CALLS A METHOD WITH THE SAME
                                                   * SIGNATURE AS DECLARED BY THE PUBLISHER'S DELEGATE
                                                   */
-                UserRegistered -= _sendEmailService.OnRegisteredUser;/*AFTER THE SUBSCRIBER GOT NOTIFIED 
+                                                                      /*AFTER THE SUBSCRIBER GOT NOTIFIED 
                                                                       * BY THE EVENT AND PROCESS IT
                                                                       * I CAN REMOVE THE SUBSCRIBER REGISTRATION 
                                                                       * TO AVOID MEMORY LEAKS
                                                                       * */
+                }catch(Exception e)
+                {
+                    UserRegistered -= _sendEmailService.OnRegisteredUser;
+                }
+               
                 return true;
 
             }

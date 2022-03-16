@@ -96,8 +96,14 @@ namespace testidentityandjwt.BL.Services
                 jwtandidentitycontext.Update(usertoupdate);
                 if (await jwtandidentitycontext.SaveChangesAsync() > 0)
                 {
-                    OnUpdateduserInfo(usertoupdate.Email);
-                    Updateduserinfo -= _sendEmailService.OnUserinfochanged;
+                    try
+                    {
+                        OnUpdateduserInfo(usertoupdate.Email);
+                    }
+                    catch(Exception e)
+                    {
+                        Updateduserinfo -= _sendEmailService.OnUserinfochanged;
+                    }
                     return _mapper.mapmyusertodto(usertoupdate);
                 }
 
