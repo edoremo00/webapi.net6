@@ -22,14 +22,15 @@ namespace testidentityandjwt.Controllers
         public async Task<IActionResult> Sendemail(string email, Emailsubjects subject)
         {
             var sendemailresponse= await _sendEmailService.SendEmail(email, subject);
-            if(sendemailresponse is bool)
+            
+            if(sendemailresponse is string)//questo perchè metodo email mi risponde con bool o oggetto Error
             {
-                return Ok(JsonSerializer.Serialize((bool)sendemailresponse));
+                return Ok();
             }
             else
             {
-                var error=sendemailresponse as Error;
-                return BadRequest(error!.ToString());
+               
+                return BadRequest(new Error {StatusCode=400,Message="error in sending email"});
             }
             
 
