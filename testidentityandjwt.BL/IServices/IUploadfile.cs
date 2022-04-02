@@ -10,6 +10,7 @@ namespace testidentityandjwt.BL.IServices
     public interface IUploadfile
     {
         Task<string>UploadFile(IFormFile file);
+        Task<string>UploadFile(IFormFile file, string foruserid);
         Task<bool> Deletefile(string filename);
 
         Task<object> Getallfilesincontainer();
