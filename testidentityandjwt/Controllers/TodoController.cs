@@ -52,9 +52,9 @@ namespace testidentityandjwt.Controllers
         }
 
         [HttpGet,Route("Getallusertodo")]
-        public ActionResult<TodoDTO> Getallusertodo(string foruserid)
+        public ActionResult<TodoDTO> Getallusertodo(string foruserid,bool externalloginuser=false)
         {
-            IEnumerable<TodoDTO> allusertodo = _todoService.Getallusertodo(foruserid);
+            IEnumerable<TodoDTO> allusertodo = _todoService.Getallusertodo(foruserid,externalloginuser);
             return allusertodo.Count()==0 ? NoContent() : Ok(allusertodo);
         }
 

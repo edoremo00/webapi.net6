@@ -116,8 +116,14 @@ namespace testidentityandjwt.BL.Services
 
         }
 
-        public IEnumerable<TodoDTO> Getallusertodo(string foruserid)
+        public IEnumerable<TodoDTO> Getallusertodo(string foruserid,bool externalloginuser)
         {
+            if (externalloginuser)
+            {
+                return jwtandidentitycontext.Todos.AsNoTracking()
+               .Where(t => t.User.Email == foruserid && !t.istodoDeleted)
+               .Select(t => _mapper.maptodototodoDTO(t));
+            }
             return jwtandidentitycontext.Todos.AsNoTracking()
                 .Where(t => t.UserId == foruserid && !t.istodoDeleted)
                 .Select(t => _mapper.maptodototodoDTO(t));
