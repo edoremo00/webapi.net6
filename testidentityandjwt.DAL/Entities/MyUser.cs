@@ -9,7 +9,7 @@ namespace testidentityandjwt.DAL.Entities
 {
     public class MyUser:IdentityUser
     {
-        public DateTime birthday { get; set; }
+        public DateTime? birthday { get; set; }
         public bool IsDeleted { get; set; } = false;
 
         public string? profilepic { get; set; }

@@ -12,7 +12,7 @@ namespace testidentityandjwt.BL.IServices
             {
                 Email = tomap.Email,
                 Userid = tomap.Id,
-                Birthday = tomap.birthday,
+                Birthday = tomap.birthday ?? DateTime.Now,
                 Username = tomap.UserName
 
             };
