@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using testidentityandjwt.BL.DTO;
 using testidentityandjwt.BL.IServices;
 using testidentityandjwt.BL.Services;
+using testidentityandjwt.BL.Utils;
 using testidentityandjwt.DAL.Repository;
 
 namespace testidentityandjwt.Controllers
@@ -54,6 +55,23 @@ namespace testidentityandjwt.Controllers
                 token = new JwtSecurityTokenHandler().WriteToken(tok),
                 expiration = tok.ValidTo
             });
+        }
+
+        [HttpPost,Route("ValidateGoogletoken")]
+        public async Task<IActionResult> ValidateGoogleToken(string token)
+        {
+           var result= await _authService.ValidateGoogletoken(token);
+            if(result is null)
+            {
+                return BadRequest("Invalid Google token");
+            }else if(result is Error)
+            {
+                return BadRequest(result);
+            }
+            else//ritorna token JWT
+            {
+                return Ok(result);
+            }
         }
 
         
