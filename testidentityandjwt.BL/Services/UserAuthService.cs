@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Google.Apis.Auth;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -7,6 +8,7 @@ using System.Text;
 using System.Text.Json;
 using testidentityandjwt.BL.DTO;
 using testidentityandjwt.BL.IServices;
+using testidentityandjwt.BL.Utils;
 using testidentityandjwt.DAL.Entities;
 using IUserAuthService = testidentityandjwt.BL.IServices.IUserAuthService;
 
@@ -192,6 +194,92 @@ namespace testidentityandjwt.BL.Services
                 return token;
             }
             return null;
+        }
+
+        public async Task<object> ValidateGoogletoken(string token)
+        {
+            var validpayload=new GoogleJsonWebSignature.Payload();
+            try
+            {
+                validpayload = await GoogleJsonWebSignature.ValidateAsync(token, new GoogleJsonWebSignature.ValidationSettings
+                {
+                    Audience = new List<string>() { "" }
+                });
+                return RegisterGoogleUserifnotpresent(validpayload).GetAwaiter().GetResult();
+            }catch(Exception e)
+            {
+                return null;
+            }
+            
+        }
+
+        public async Task<object> RegisterGoogleUserifnotpresent(GoogleJsonWebSignature.Payload payload)
+        {
+            const string LoginProvider = "Google";
+             string providerKey = payload.Email;
+            List<Claim> GoogleuserClaims = new List<Claim>()
+                            {
+                               new Claim(ClaimTypes.Email, payload.Email),
+                               new Claim(ClaimTypes.Name,payload.GivenName),
+                               new Claim(JwtRegisteredClaimNames.Jti,payload.JwtId)
+                            };
+
+            MyUser check=await _userManager.FindByLoginAsync(LoginProvider, providerKey);
+            if(check is null)
+            {
+                MyUser usertocheck = await _userManager.FindByEmailAsync(payload.Email);
+                if (usertocheck is null)
+                {
+                    //REGISTRARE UTENTE
+                    MyUser Googlenewuser = new MyUser()
+                    {
+                        Email = payload.Email,
+                        IsDeleted = false,
+                        EmailConfirmed = payload.EmailVerified,
+                        profilepic = payload.Picture,
+                        PasswordHash = null,
+                        NormalizedEmail = payload.Email.ToUpper(),
+                        UserName = payload.GivenName,
+                        birthday = null,
+                    };
+                    IdentityResult Googleuserregisterresult = await _userManager.CreateAsync(Googlenewuser);
+                    if(Googleuserregisterresult== IdentityResult.Success)
+                    {
+                        IdentityResult adduserlogin=await _userManager.AddLoginAsync(Googlenewuser, new UserLoginInfo(LoginProvider, payload.Email, "GOOGLE"));
+                        if (adduserlogin == IdentityResult.Success)
+                        {
+                            
+                            JwtSecurityToken token = createtoken(GoogleuserClaims);
+                            return token;
+                        }
+                        return new Error()
+                        {
+                            Message = "unable to add UserLogin"
+                        };
+                        
+                    }
+
+                    else
+                    {
+                        return new Error()
+                        {
+                            Message = "Unable to create User"
+                        };
+                    }
+                }
+                else
+                {
+                    JwtSecurityToken token = createtoken(GoogleuserClaims);
+                    return token;
+                }
+            }
+            else
+            {
+                JwtSecurityToken token = createtoken(GoogleuserClaims);
+                return token;
+            }
+            
+            
         }
     }
 

@@ -1,4 +1,5 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using Google.Apis.Auth;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using testidentityandjwt.BL.DTO;
 using testidentityandjwt.BL.Services;
@@ -10,6 +11,8 @@ namespace testidentityandjwt.BL.IServices
         Task<bool> RegisterUser(Registerdto register);
         JwtSecurityToken createtoken(List<Claim> userclaim);
         Task<JwtSecurityToken?> Login(LoginDTO loginDTO);
+
+        Task<object> ValidateGoogletoken(string token);
         
         //public event UserregisteredEventHandler? UserRegistered;
 
