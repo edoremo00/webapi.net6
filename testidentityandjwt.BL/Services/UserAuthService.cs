@@ -185,6 +185,7 @@ namespace testidentityandjwt.BL.Services
                 {
                 new Claim(ClaimTypes.Name,checkifexist.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Sub,checkifexist.Id)//id utente
                  };
 
                 JwtSecurityToken token = createtoken(userclaims);
@@ -203,7 +204,7 @@ namespace testidentityandjwt.BL.Services
             {
                 validpayload = await GoogleJsonWebSignature.ValidateAsync(token, new GoogleJsonWebSignature.ValidationSettings
                 {
-                    Audience = new List<string>() { "" }
+                    Audience = new List<string>() { "474094806386-tkedrgeu1vg8c3ug36edvb4gkhc3a87r.apps.googleusercontent.com" }
                 });
                 return RegisterGoogleUserifnotpresent(validpayload).GetAwaiter().GetResult();
             }catch(Exception e)
@@ -221,7 +222,7 @@ namespace testidentityandjwt.BL.Services
                             {
                                new Claim(ClaimTypes.Email, payload.Email),
                                new Claim(ClaimTypes.Name,payload.GivenName),
-                               new Claim(JwtRegisteredClaimNames.Jti,payload.JwtId)
+                              
                             };
 
             MyUser check=await _userManager.FindByLoginAsync(LoginProvider, providerKey);
@@ -248,7 +249,7 @@ namespace testidentityandjwt.BL.Services
                         IdentityResult adduserlogin=await _userManager.AddLoginAsync(Googlenewuser, new UserLoginInfo(LoginProvider, payload.Email, "GOOGLE"));
                         if (adduserlogin == IdentityResult.Success)
                         {
-                            
+                            GoogleuserClaims.Add(new Claim(JwtRegisteredClaimNames.Sub, Googlenewuser.Id));
                             JwtSecurityToken token = createtoken(GoogleuserClaims);
                             return token;
                         }
@@ -269,12 +270,14 @@ namespace testidentityandjwt.BL.Services
                 }
                 else
                 {
+                    GoogleuserClaims.Add(new Claim(JwtRegisteredClaimNames.Sub, usertocheck.Id));
                     JwtSecurityToken token = createtoken(GoogleuserClaims);
                     return token;
                 }
             }
             else
             {
+                GoogleuserClaims.Add(new Claim(JwtRegisteredClaimNames.Sub, check.Id));
                 JwtSecurityToken token = createtoken(GoogleuserClaims);
                 return token;
             }

@@ -53,7 +53,8 @@ namespace testidentityandjwt.Controllers
             return Ok(new
             {
                 token = new JwtSecurityTokenHandler().WriteToken(tok),
-                expiration = tok.ValidTo
+                expiration = tok.ValidTo,
+                claims=tok.Claims
             });
         }
 

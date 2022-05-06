@@ -22,7 +22,7 @@ namespace testidentityandjwt.Controllers
         }
 
         [HttpPost,Route("CreateTodo")]
-        public ActionResult<TodoDTO> CreateTodo(TodoDTO todoDTO)
+        public ActionResult<TodoDTO> CreateTodo(TodoDTO? todoDTO)
         {
             return Ok(_crudinterface.Create(todoDTO));
 
